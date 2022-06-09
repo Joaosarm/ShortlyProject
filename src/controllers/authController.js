@@ -16,7 +16,7 @@ export async function signUp(req, res) {
     `, [name, email, passwordHash]);
 
 
-    return res.sendStatus(201); // created
+    return res.sendStatus(201); // CREATED
   } catch (e) {
     console.log("Erro na criação do usuário!\n", e);
     return res.sendStatus(500);
@@ -29,7 +29,7 @@ export async function signIn(req, res) {
   const { email, password } = req.body;
   try {
     const user = await db.query(`SELECT * FROM users WHERE email=$1`, [email]);
-    if (user.rowCount===0) return res.sendStatus(404); // USUARIO NAO ENCONTRADO - NOT FOUND
+    if (user.rowCount===0) return res.sendStatus(404); // Usuario nao encontrado - NOT FOUND
 
     if (user.rowCount>0 && bcrypt.compareSync(password, user.rows[0].password)) {
       const token = uuid();
@@ -38,10 +38,10 @@ export async function signIn(req, res) {
         VALUES ($1, $2)
     `, [user.rows[0].id, token]);
 
-      return res.send({ token }); // retorna token
+      return res.send({ token }); // Retorna token
     }
 
-    return res.sendStatus(401); // SENHA ERRADA - NOT FOUND
+    return res.sendStatus(401); // Senha errada - NOT FOUND
   } catch (e) {
     console.log("Erro no login!\n", e);
     return res.sendStatus(500);
@@ -51,7 +51,7 @@ export async function signIn(req, res) {
 export async function signOut(req, res) {
   const { authorization } = req.headers;
   const token = authorization?.replace("Bearer", "").trim();
-  if (!token) return res.sendStatus(403); // NAO TEM TOKEN - FORBIDEN
+  if (!token) return res.sendStatus(403); // Não tem token - FORBIDEN
 
   try {
     await db.query(`
@@ -59,7 +59,7 @@ export async function signOut(req, res) {
     WHERE token = $1
     `, [token]);
     
-    res.sendStatus(200); //SUCESSO
+    res.sendStatus(200); 
   } catch (e) {
     console.log("Erro ao sair!\n", e);
     return res.sendStatus(500);
