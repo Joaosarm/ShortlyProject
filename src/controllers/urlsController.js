@@ -27,6 +27,8 @@ export async function shortenUrl(req, res) {
     }
 }
 
+
+// Receber dados do link encurtado pelo id
 export async function getUrl(req, res) {
     const { id } = req.params;
 
@@ -37,7 +39,24 @@ export async function getUrl(req, res) {
         res.send(result.rows[0]);
         
     } catch (e) {
-        console.log("Erro no resgate do link encurtado!\n", e);
+        console.log("Erro no resgate de dados sobre o link encurtado!\n", e);
+        return res.sendStatus(500);
+    }
+}
+
+export async function openUrl(req, res) {
+    const { shortUrl } = req.params;
+
+    try {
+        const result = await db.query(`SELECT url, "visitCount" FROM "shortenedUrls" WHERE "shortUrl"=$1`, [shortUrl]);
+        if (result.rowCount === 0) return res.sendStatus(404);
+
+        await db.query(`UPDATE "shortenedUrls" SET "visitCount"=$1 WHERE "shortUrl"=$2`, [result.rows[0].visitCount+1,shortUrl])
+
+        res.redirect(result.rows[0].url);
+        
+    } catch (e) {
+        console.log("Erro ao abrir link!\n", e);
         return res.sendStatus(500);
     }
 }
