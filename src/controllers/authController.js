@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import bcrypt from "bcrypt";
 
-import db from "../../database.js";
+import db from "../database.js";
 
 
 // Função de Criação de Usuário ------ Recebendo nome, email e senha
